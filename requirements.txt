@@ -1,0 +1,6 @@
+click
+pydantic
+rich
+pyYAML
+python-dotenv
+requests
