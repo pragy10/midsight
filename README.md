@@ -1,14 +1,8 @@
-Here’s a more **friendly**, approachable, and polished version of your README. It keeps all the details but improves tone, structure, and readability for newcomers and contributors alike:
-
----
-
-````markdown
 # 🛡️ MIDSight
 
 **A Modern, Modular Linux Security CLI Powered by AI**  
 _Created by Pragya Sekar_
 
----
 
 ## 🔍 What is MIDSight?
 
@@ -16,7 +10,6 @@ MIDSight is a command-line tool built for **monitoring Linux systems**. It helps
 
 Whether you're a security enthusiast, sysadmin, or just curious — MIDSight gives you insight with clarity.
 
----
 
 ## 🚀 Getting Started
 
@@ -29,7 +22,6 @@ Before installing, make sure you have:
 - An **Internet connection** (for AI and threat intelligence features)
 - **Git** (recommended)
 
----
 
 ### 🧰 Installation
 
