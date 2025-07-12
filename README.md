@@ -1,168 +1,185 @@
-```markdown
-# MIDSight
-
-**A Modern Modular Linux Security CLI powered by AI**  
-_by Pragya Sekar_
+Here’s a more **friendly**, approachable, and polished version of your README. It keeps all the details but improves tone, structure, and readability for newcomers and contributors alike:
 
 ---
 
-## 🛡️ Overview
+````markdown
+# 🛡️ MIDSight
 
-MIDSight is a modular command-line security tool for Linux systems. It monitors processes, file integrity, network activity, honeytokens, and more—enriching findings with AI-powered explanations using Google Gemini.
+**A Modern, Modular Linux Security CLI Powered by AI**  
+_Created by Pragya Sekar_
 
 ---
 
-## 🚀 Quick Start
+## 🔍 What is MIDSight?
 
-### 1. Prerequisites
+MIDSight is a command-line tool built for **monitoring Linux systems**. It helps detect suspicious processes, changes to important files, network anomalies, unauthorized access to decoy files (honeytokens), and more — with powerful **AI explanations** using **Google Gemini**.
 
-- **Python 3.9+** installed on your system.
-- **Linux OS** (tested on Ubuntu/Debian).
-- **Internet connection** (for Gemini LLM analysis and threat intelligence enrichment).
-- **Git** (recommended for cloning/updating the repo).
+Whether you're a security enthusiast, sysadmin, or just curious — MIDSight gives you insight with clarity.
 
-### 2. Clone the Repository
+---
 
-```
+## 🚀 Getting Started
+
+### ✅ Requirements
+
+Before installing, make sure you have:
+
+- **Python 3.9 or higher**
+- A **Linux system** (tested on Ubuntu/Debian)
+- An **Internet connection** (for AI and threat intelligence features)
+- **Git** (recommended)
+
+---
+
+### 🧰 Installation
+
+#### 1. Clone the Repository
+
+```bash
 git clone https://github.com/yourusername/midsight.git
 cd midsight
-```
+````
 
-### 3. Install Dependencies
+#### 2. Set Up Your Environment
 
-It is recommended to use a virtual environment:
+We recommend using a virtual environment:
 
-```
+```bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Configure the Gemini API Key
+#### 3. Configure Gemini API
 
-MIDSight uses the Google Gemini LLM for explanations and summaries.  
-**You must set up your `.env` file with your Gemini API key before using the AI features.**
+MIDSight uses **Google Gemini** to provide AI-powered summaries and insights.
 
-#### a. Get Your Gemini API Key
+##### Option 1: Use the Interactive Menu
 
-- Go to [Google AI Studio](https://aistudio.google.com).
-- Create or copy your Gemini API key.
-
-#### b. Add the Key to `.env`
-
-You can use the built-in configuration menu:
-
-```
+```bash
 python main.py
 ```
-- Select the "Configuration" option from the menu.
-- Enter your Gemini API key when prompted.
-- The key will be saved in a `.env` file in your project directory.
 
-Or, manually create a `.env` file in the project root:
+* Select **"Configuration"** from the menu.
+* Paste your Gemini API key when prompted.
+* A `.env` file will be created for you.
+
+##### Option 2: Add API Key Manually
+
+Create a `.env` file in the root directory:
 
 ```
 GEMINI_API_KEY=your-gemini-api-key-here
 ```
 
-> **Never share or commit your `.env` file to a public repository.**
+> ⚠️ **Do not share or commit your `.env` file**. It contains your private API key.
 
 ---
 
-## 🏁 How to Run MIDSight
+## 🏁 Running MIDSight
 
-From your project directory:
+Start the tool:
 
-```
+```bash
 python main.py
 ```
 
-You will see an interactive menu:
+You'll see an interactive menu:
 
 ```
-  === Midsight Security CLI ===
-   Monitor Processes
-   File Integrity Checker
-   Network Monitor
-   GeoIP & Threat Intel Enricher
-   Honeytokens / Canary Files
-   Generate Security Report
-   Configuration
-   Exit
+=== MIDSight Security CLI ===
+  1. Monitor Processes
+  2. File Integrity Checker
+  3. Network Monitor
+  4. GeoIP & Threat Intel Enricher
+  5. Honeytokens / Canary Files
+  6. Generate Security Report
+  7. Configuration
+  8. Exit
 ```
 
-- **Type the number** for the module you wish to run and follow the prompts.
-- For the first run, set up the configuration (Gemini API key) before using AI-powered features.
+* Just choose an option (e.g., 1 for Process Monitoring) and follow the prompts.
+* Set up your Gemini API key first to enable AI insights.
 
 ---
 
-## ⚠️ Before You Use
+## ⚠️ Important Notes
 
-- **Run as a regular user** (not root) unless you need to monitor protected files or processes.
-- **Back up important files** before using file integrity or honeytoken modules.
-- **Review monitored file paths** in `file_integrity.py` and honeytoken paths in `honeytoken.py` to ensure they fit your system.
-- **Check your `.env`** for the correct Gemini API key.
-- **Do not share your `.env` file** or API key with anyone.
+* **Run as a regular user** unless you need access to protected files or processes.
+* **Back up important files** before using integrity or honeytoken features.
+* Review monitored file paths in:
 
----
-
-## 📝 Features
-
-- **Process Monitoring:** Detects suspicious or anomalous processes.
-- **File Integrity Checker:** Monitors critical files for unauthorized changes.
-- **Network Monitor:** Flags suspicious open ports and outbound connections.
-- **GeoIP & Threat Intel:** Enriches network events with location and reputation data.
-- **Honeytokens:** Detects access/modification to decoy files.
-- **Security Report:** Summarizes all findings with LLM-powered insights.
-- **Configuration Menu:** Easily set or update your Gemini API key.
+  * `file_integrity.py` → for file checks
+  * `honeytoken.py` → for decoy files
+* Check `.env` to make sure your Gemini key is valid and present.
 
 ---
 
-## 💡 Troubleshooting
+## 🧠 Features at a Glance
 
-- If you see errors about missing API keys, make sure your `.env` file exists and contains `GEMINI_API_KEY`.
-- If a module shows no output, it means no suspicious activity was detected for that check.
-- For best results, keep your dependencies up to date:
-  ```
+* 🧾 **Process Monitoring** – Spot suspicious or abnormal system activity
+* 🗃️ **File Integrity Checker** – Detect unexpected changes to key files
+* 🌐 **Network Monitor** – Watch for unusual ports or external connections
+* 🌍 **GeoIP & Threat Intelligence** – Add location and reputation to network events
+* 🪤 **Honeytokens** – Detect tampering with decoy files
+* 📊 **Security Report** – Summarized output with Gemini AI explanations
+* ⚙️ **Config Menu** – Easily manage your Gemini API key
+
+---
+
+## 🛠️ Troubleshooting
+
+* **Missing Gemini key?** Make sure your `.env` file exists and is correctly formatted.
+* **No suspicious output?** That’s a good thing! The modules report only when something unusual is found.
+* **Dependencies outdated?** Keep them fresh with:
+
+  ```bash
   pip install --upgrade -r requirements.txt
   ```
 
 ---
 
-## 📂 Project Structure
+## 📁 Project Structure
 
-| File/Folder         | Purpose                                 |
-|---------------------|-----------------------------------------|
-| `main.py`           | Main CLI entry point                    |
-| `db.py`             | Database management                     |
-| `process_monitor.py`| Process monitoring module               |
-| `file_integrity.py` | File integrity checker                  |
-| `network_monitor.py`| Network activity monitor                |
-| `geoip_enricher.py` | GeoIP and threat intelligence enrichment|
-| `honeytoken.py`     | Honeytoken/canary file monitoring       |
-| `report.py`         | Security report generator               |
-| `ai_explainer.py`   | LLM integration for explanations        |
-| `requirements.txt`  | Python dependencies                     |
-| `.env`              | Stores your Gemini API key              |
-| `README.md`         | This documentation                      |
-
----
-
-## 🛡️ Security Note
-
-- MIDSight is for educational and research use.  
-- Always review code and configuration before deploying in production environments.
+| File/Folder          | Purpose                           |
+| -------------------- | --------------------------------- |
+| `main.py`            | Entry point for the CLI           |
+| `db.py`              | Handles internal data persistence |
+| `process_monitor.py` | Monitors running processes        |
+| `file_integrity.py`  | Detects unauthorized file changes |
+| `network_monitor.py` | Tracks open ports and traffic     |
+| `geoip_enricher.py`  | Adds GeoIP and reputation data    |
+| `honeytoken.py`      | Monitors decoy files for access   |
+| `report.py`          | Compiles a detailed report        |
+| `ai_explainer.py`    | Handles Gemini LLM integration    |
+| `requirements.txt`   | Dependency list                   |
+| `.env`               | Your private Gemini API key       |
+| `README.md`          | This file you're reading :)       |
 
 ---
 
-## 🙏 Credits
+## 🔐 Security & Ethics
 
-Developed by **Pragya Sekar**  
-"Security is not a product, but a process."
+* MIDSight is built for **learning, research, and defensive purposes**.
+* **Always audit code** and behavior before using it in sensitive or production environments.
 
 ---
 
-## 📧 Feedback & Issues
+## 🙌 Acknowledgments
 
-Open an issue or pull request on GitHub to contribute or report bugs.
+Made with 💻 and ☕ by **Pragya Sekar**
+
+> “Security is not a product, but a process.”
+
+---
+
+## 📬 Questions or Suggestions?
+
+Open an [issue](https://github.com/yourusername/midsight/issues) or submit a pull request to contribute or report bugs.
+
+```
+
+---
+
+Let me know if you’d like a version with badges, license section, or a GIF/demo screenshot included!
 ```
