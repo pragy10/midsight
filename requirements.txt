@@ -8,3 +8,4 @@ psutil
 pyfiglet
 pwinput
 datetime
+google-genai
