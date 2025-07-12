@@ -4,5 +4,4 @@ rich
 pyYAML
 python-dotenv
 requests
-sqlite3
 psutil
