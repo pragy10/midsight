@@ -166,5 +166,4 @@ Made with 💻 and ☕ by **Pragya Sekar**
 
 Open an [issue](https://github.com/yourusername/midsight/issues) or submit a pull request to contribute or report bugs.
 
-```
 
