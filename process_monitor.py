@@ -1,12 +1,37 @@
 import psutil
-import time
+from datetime import datetime
+from db import get_conn
+from ai_explainer import explain_process
+
+KERNEL_PREFIXES = [
+    "kworker", "ksoftirqd", "migration", "rcu_", "kauditd", "watchdogd", "ksmd", "khugepaged"
+]
+SYSTEM_USERS = ['root', 'systemd-network', 'syslog', 'messagebus', 'daemon']
+
+def is_kernel_thread(proc_name):
+    return any(proc_name.startswith(prefix) for prefix in KERNEL_PREFIXES)
+
+def is_system_user(user):
+    return user in SYSTEM_USERS
+
+def is_suspicious(proc):
+    if is_kernel_thread(proc['name']):
+        return False
+    if is_system_user(proc['username']) and not (proc['username'] == 'root' and proc['exe'] and proc['exe'].startswith('/home')):
+        return False
+    if proc['exe'] and (proc['exe'].startswith('/tmp') or proc['exe'].startswith('/dev/shm')):
+        return True
+    if 'python' in proc['name'].lower() and 'ssh' in proc['cmdline']:
+        return True
+    if proc['username'] == 'root' and proc['exe'] and proc['exe'].startswith('/home'):
+        return True
+    if 'base64' in proc['cmdline'] or 'nc ' in proc['cmdline'] or 'bash -i' in proc['cmdline']:
+        return True
+    return False
 
 def get_running_processes():
-    """
-    Returns a list of dictionaries with info about running processes.
-    """
     processes = []
-    for proc in psutil.process_iter(['pid', 'name', 'exe', 'cmdline', 'username', 'ppid']):
+    for proc in psutil.process_iter(['pid', 'ppid', 'name', 'exe', 'cmdline', 'username']):
         try:
             info = proc.info
             processes.append({
@@ -21,30 +46,41 @@ def get_running_processes():
             continue
     return processes
 
-def detect_suspicious_processes(processes):
-    """
-    Returns a list of suspicious processes based on simple rules.
-    """
-    suspicious = []
-    for p in processes:
-        
-        if p['exe'] and (p['exe'].startswith('/tmp') or p['exe'].startswith('/dev/shm')):
-            suspicious.append((p, 'Running from tmp/shm'))
+def log_suspicious_process(proc, reason):
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute(
+        '''INSERT INTO process_findings (timestamp, pid, ppid, name, exe, cmdline, username, reason)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+        (datetime.now().isoformat(), proc['pid'], proc['ppid'], proc['name'], proc['exe'], proc['cmdline'], proc['username'], reason)
+    )
+    conn.commit()
+    conn.close()
 
-        if 'python' in p['name'].lower() and 'ssh' in p['cmdline']:
-            suspicious.append((p, 'Python spawning ssh'))
-            
-        if not p['exe']:
-            suspicious.append((p, 'No executable path'))
-    return suspicious
-
-if __name__ == "__main__":
-    print("Scanning running processes...")
+def run_process_monitor_and_llm():
+    print("\n[+] Scanning running processes for suspicious activity...")
     procs = get_running_processes()
-    sus = detect_suspicious_processes(procs)
-    if sus:
-        print("Suspicious processes detected:")
-        for proc, reason in sus:
-            print(f"PID {proc['pid']} ({proc['name']}): {reason}")
-    else:
+    flagged = 0
+    for proc in procs:
+        if is_suspicious(proc):
+            log_suspicious_process(proc, "Flagged by rule")
+            print(f"\nSuspicious process detected: PID {proc['pid']} ({proc['name']})")
+            print(f"  Executable: {proc['exe']}")
+            print(f"  Cmdline: {proc['cmdline']}")
+            print("  Running LLM analysis...")
+            # Prepare a tuple as expected by ai_explainer
+            proc_row = (
+                None, datetime.now().isoformat(), proc['pid'], proc['ppid'],
+                proc['name'], proc['exe'], proc['cmdline'], proc['username'], "Flagged by rule"
+            )
+            try:
+                insight = explain_process(proc_row)
+                print("\n🔎 LLM Insight:")
+                print(insight)
+            except Exception as e:
+                print(f"LLM Error: {e}")
+            flagged += 1
+    if flagged == 0:
         print("No suspicious processes found.")
+
+# No need for if __name__ == "__main__" block here, as this will be called from main.py

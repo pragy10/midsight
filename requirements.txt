@@ -1,7 +1,7 @@
 click
 pydantic
 rich
-pyYAML
+pyyaml
 python-dotenv
 requests
 psutil
