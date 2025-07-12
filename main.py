@@ -20,7 +20,7 @@ def print_banner():
     except Exception:
         ascii_banner = "MIDSight"
     console.print(f"[bold bright_magenta]{ascii_banner}[/bold bright_magenta]")
-    console.print("[bold bright_cyan]  A Modern Security Tool powered by AI[/bold bright_cyan]")
+    console.print("[bold bright_cyan]  A Modern, Modular Linux Security CLI Tool Powered by AI[/bold bright_cyan]")
     console.print("[italic cyan]  by Pragya Sekar[/italic cyan]\n")
 
 def main_menu():

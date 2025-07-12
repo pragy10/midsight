@@ -1,6 +1,6 @@
 # 🛡️ MIDSight
 
-**A Modern, Modular Linux Security CLI Powered by AI**  
+**A Modern, Modular Linux Security CLI Tool Powered by AI**  
 _Created by Pragya Sekar_
 
 
@@ -161,9 +161,6 @@ You'll see an interactive menu:
 
 Made with 💻 and ☕ by **Pragya Sekar**
 
-> “Security is not a product, but a process.”
-
----
 
 ## 📬 Questions or Suggestions?
 
@@ -171,7 +168,3 @@ Open an [issue](https://github.com/yourusername/midsight/issues) or submit a pul
 
 ```
 
----
-
-Let me know if you’d like a version with badges, license section, or a GIF/demo screenshot included!
-```
