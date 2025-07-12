@@ -5,3 +5,6 @@ pyyaml
 python-dotenv
 requests
 psutil
+pyfiglet
+pwinput
+datetime

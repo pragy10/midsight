@@ -1,6 +1,9 @@
 import requests
 from db import get_conn
 from ai_explainer import explain_geoip_event
+from rich.console import Console
+
+console = Console()
 
 # Free GeoIP API (ipinfo.io) and AbuseIPDB for threat checks
 IPINFO_URL = "https://ipinfo.io/{ip}/json"
@@ -49,7 +52,7 @@ def extract_ip(details):
     return match.group(1) if match else None
 
 def run_geoip_threat_enricher():
-    print("\n[+] Enriching recent network events with GeoIP and threat intel...")
+    console.print("\n [+] Enriching recent network events with GeoIP and threat intel...", style="bold bright_green")
     events = get_recent_network_events()
     flagged = 0
     for event in events:
@@ -57,16 +60,21 @@ def run_geoip_threat_enricher():
         if ip:
             location = geoip_lookup(ip)
             blacklist = check_blacklist(ip)
-            print(f"\nEvent: {event[2]} | Details: {event[3]}")
-            print(f"  IP: {ip}")
-            print(f"  Location: {location}")
-            print(f"  Blacklist: {blacklist}")
+            console.print(f"\n  [bold white]Event:[/bold white] {event[2]} | [bold white]Details:[/bold white] {event[3]}")
+            console.print(f"  [bold white]IP:[/bold white] {ip}")
+            console.print(f"  [bold white]Location:[/bold white] {location}")
+            console.print(f"  [bold white]Blacklist:[/bold white] {blacklist}")
+            console.print("\n  Running LLM analysis...", style="bold bright_cyan")
             try:
                 insight = explain_geoip_event(event[2], ip, location, blacklist)
-                print("\n🔎 LLM Insight:")
-                print(insight)
+                console.print("\n 🔎 [bold bright_yellow]LLM Insight:[/bold bright_yellow]")
+                console.print(insight, style="white")
             except Exception as e:
-                print(f"LLM Error: {e}")
+                console.print(f"  LLM Error: {e}", style="bold bright_red")
+                console.print("\n  Have you configured your GEMINI API KEY?", style="bold bright_yellow")
+                break
             flagged += 1
+            console.print(" \n " + "="*60, style="bold bright_black")
     if flagged == 0:
-        print("No recent network events with extractable IPs found.")
+        console.print("  No recent network events with extractable IPs found.\n", style="bold bright_green")
+

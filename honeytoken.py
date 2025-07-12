@@ -3,6 +3,9 @@ import time
 from datetime import datetime
 from db import get_conn
 from ai_explainer import explain_honeytoken_event
+from rich.console import Console
+
+console = Console()
 
 # List of honeytoken files to monitor
 HONEYTOKENS = [
@@ -30,8 +33,7 @@ def log_honeytoken_event(file_path, event_type, details):
     conn.close()
 
 def monitor_honeytokens():
-    print("\n[+] Monitoring honeytoken files for access or changes (Ctrl+C to stop)...")
-    # Store initial access and modification times
+    console.print("\n [+] Monitoring honeytoken files for access or changes (Ctrl+C to stop)...", style="bold bright_green")
     file_stats = {}
     for f in HONEYTOKENS:
         if os.path.exists(f):
@@ -46,26 +48,33 @@ def monitor_honeytokens():
                     old_atime, old_mtime = file_stats.get(f, (atime, mtime))
                     if atime != old_atime:
                         log_honeytoken_event(f, "access", f"Access time changed: {old_atime} -> {atime}")
-                        print(f"\n[!] Honeytoken accessed: {f}")
+                        console.print(f"\n[bold red]  Honeytoken accessed:[/bold red] {f}")
+                        console.print("\n  Running LLM analysis...", style="bold bright_cyan")
                         try:
                             insight = explain_honeytoken_event(f, "access")
-                            print("\n🔎 LLM Insight:")
-                            print(insight)
+                            console.print("\n  🔎 [bold bright_yellow]LLM Insight:[/bold bright_yellow]")
+                            console.print(insight, style="white")
                         except Exception as e:
-                            print(f"LLM Error: {e}")
+                            console.print(f"  LLM Error: {e}", style="bold bright_red")
+                            console.print("\n  Have you configured your GEMINI API KEY?", style="bold bright_yellow")
+                            break
                     if mtime != old_mtime:
                         log_honeytoken_event(f, "modified", f"Modification time changed: {old_mtime} -> {mtime}")
-                        print(f"\n[!] Honeytoken modified: {f}")
+                        console.print(f"\n  [bold red]Honeytoken modified:[/bold red] {f}")
+                        console.print("\n  Running LLM analysis...", style="bold bright_cyan")
                         try:
                             insight = explain_honeytoken_event(f, "modified")
-                            print("\n🔎 LLM Insight:")
-                            print(insight)
+                            console.print("\n  🔎 [bold bright_yellow]LLM Insight:[/bold bright_yellow]")
+                            console.print(insight, style="white")
                         except Exception as e:
-                            print(f"LLM Error: {e}")
+                            console.print(f"  LLM Error: {e}", style="bold bright_red")
+                            console.print("\n  Have you configured your GEMINI API KEY?", style="bold bright_yellow")
+                            break
                     file_stats[f] = (atime, mtime)
             time.sleep(2)
     except KeyboardInterrupt:
-        print("\n[!] Honeytoken monitoring stopped. Returning to main menu...")
+        console.print("\n[bold bright_yellow] [!] Honeytoken monitoring stopped. Returning to main menu...[/bold bright_yellow]\n")
+
 
 def run_honeytoken_monitor_and_llm():
     create_honeytokens()

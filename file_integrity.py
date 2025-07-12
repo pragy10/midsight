@@ -4,6 +4,9 @@ import json
 from datetime import datetime
 from db import get_conn
 from ai_explainer import explain_file_change
+from rich.console import Console
+
+console = Console()
 
 MONITORED_FILES = [
     '/etc/passwd',
@@ -30,25 +33,34 @@ def create_baseline():
 
 def check_integrity_and_log():
     if not os.path.exists(BASELINE_FILE):
-        print("No baseline found. Creating one now...")
+        console.print(" [+]No baseline found. Creating one now...", style="bold bright_yellow")
         create_baseline()
         return
 
     with open(BASELINE_FILE) as f:
         baseline = json.load(f)
 
+    any_change = False
     for fpath in MONITORED_FILES:
         current_hash = hash_file(fpath)
         old_hash = baseline.get(fpath)
         if old_hash != current_hash:
-            print(f"\n[!] Change detected in: {fpath}")
+            any_change = True
+            console.print(f"\n  [bold red][!] Change detected in:[/bold red] {fpath}")
             log_file_change(fpath, "modified", f"Hash changed: {old_hash} -> {current_hash}")
+            console.print("\n  Running LLM analysis...", style="bold bright_cyan")
             try:
                 insight = explain_file_change(fpath, "modified", old_hash, current_hash)
-                print("\n🔎 LLM Insight:")
-                print(insight)
+                console.print("\n  🔎 [bold bright_yellow]LLM Insight:[/bold bright_yellow]")
+                console.print(insight, style="white")
             except Exception as e:
-                print(f"LLM Error: {e}")
+                console.print(f"  LLM Error: {e}", style="bold bright_red")
+                console.print("\n  Have you configured your GEMINI API KEY?", style="bold bright_yellow")
+                break
+            console.print("\n " + "="*60, style="bold bright_black")
+    if not any_change:
+        console.print(" No file changes detected.\n", style="bold green")
+
 
 def log_file_change(file_path, change_type, details):
     conn = get_conn()
